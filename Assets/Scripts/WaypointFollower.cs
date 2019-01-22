@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class WaypointFollower : MonoBehaviour
 {
-    public GameObject[] waypoints;
-    public int num = 0;
-    public float minDis;
+    public GameObject[] waypointsA;
+    public GameObject[] waypointsB;
+    public int num01 = 0;
+    public int num02 = 0;
+    public float minDist;
     public float speed;
     public bool rand = false;
     public bool go = true;
+    public bool switcher = false;
 
 	// Use this for initialization
 	void Start () {
@@ -19,19 +22,38 @@ public class WaypointFollower : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        float dist = Vector3.Distance(gameObject.transform.position, waypoints[num].transform.position);
+        if(switcher)
+        {
+            float dist = Vector3.Distance(gameObject.transform.position, waypointsA[num01].transform.position);
+            Goer(dist, waypointsA, num01);
+        }
+        else
+        {
+            float dist = Vector3.Distance(gameObject.transform.position, waypointsB[num02].transform.position);
+            Goer(dist, waypointsB, num02);
+        }
         
-        if(go)
+	}
+
+    public void Move(int num, GameObject[] array)
+    {
+        gameObject.transform.LookAt(array[num].transform.position);
+        gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
+    }
+
+    public void Goer(float dist, GameObject[] array, int num)
+    {
+        if (go)
         {
             if (dist > minDist)
             {
-                Move();
+                Move(num, array);
             }
             else
             {
-                if(!rand)
+                if (!rand)
                 {
-                    if(num + 1 == waypoints.length)
+                    if (num + 1 == array.Length)
                     {
                         num = 0;
                     }
@@ -42,15 +64,9 @@ public class WaypointFollower : MonoBehaviour
                 }
                 else
                 {
-                    num = Random.Range(0, waypoints.Length);
+                    num = Random.Range(0, array.Length);
                 }
             }
         }
-	}
-
-    public void Move()
-    {
-        gameObject.transform.LookAt(waypoints[num].transform.position);
-        gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
     }
 }
