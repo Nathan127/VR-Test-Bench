@@ -8,65 +8,78 @@ public class WaypointFollower : MonoBehaviour
     public GameObject[] waypointsB;
     public int num01 = 0;
     public int num02 = 0;
-    public float minDist;
+    public float minDist01 = 0.1f;
+    public float minDist02 = 0.1f;
     public float speed;
-    public bool rand = false;
     public bool go = true;
     public bool switcher = false;
 
 	// Use this for initialization
-	void Start () {
-		
+	void Start ()
+    {
+        minDist01 = 0.1f;
+        minDist02 = 0.1f;
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        if(switcher)
+        if(go)
         {
-            float dist = Vector3.Distance(gameObject.transform.position, waypointsA[num01].transform.position);
-            Goer(dist, waypointsA, num01);
-        }
-        else
-        {
-            float dist = Vector3.Distance(gameObject.transform.position, waypointsB[num02].transform.position);
-            Goer(dist, waypointsB, num02);
-        }
-        
-	}
-
-    public void Move(int num, GameObject[] array)
-    {
-        gameObject.transform.LookAt(array[num].transform.position);
-        gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
-    }
-
-    public void Goer(float dist, GameObject[] array, int num)
-    {
-        if (go)
-        {
-            if (dist > minDist)
+            if (!switcher)
             {
-                Move(num, array);
-            }
-            else
-            {
-                if (!rand)
+                float dist = Vector3.Distance(gameObject.transform.position, waypointsA[num01].transform.position);
+                if(dist > minDist01)
                 {
-                    if (num + 1 == array.Length)
-                    {
-                        num = 0;
-                    }
-                    else
-                    {
-                        num++;
-                    }
+                    Move();
                 }
                 else
                 {
-                    num = Random.Range(0, array.Length);
+                    if(num01 + 1 == waypointsA.Length)
+                    {
+                        //num01 = 0;
+                        go = false;
+                    }
+                    else
+                    {
+                        num01++;
+                    }
                 }
             }
+            else
+            {
+                float dist = Vector3.Distance(gameObject.transform.position, waypointsB[num02].transform.position);
+                if (dist > minDist02)
+                {
+                    Move();
+                }
+                else
+                {
+                    if (num02 + 1 == waypointsB.Length)
+                    {
+                        //num02 = 0;
+                        go = false;
+                    }
+                    else
+                    {
+                        num02++;
+                    }
+                }
+            }
+        }
+	}
+
+    public void Move()
+    {
+        if(!switcher)
+        {
+            gameObject.transform.LookAt(waypointsA[num01].transform.position);
+            gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
+        }
+        else
+        {
+            gameObject.transform.LookAt(waypointsB[num02].transform.position);
+            gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
         }
     }
 }
