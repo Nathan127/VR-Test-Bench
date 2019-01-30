@@ -473,3 +473,4 @@ MonoBehaviour:
   speed: 20
   go: 1
   switcher: 0
+  disable_switch: 0
